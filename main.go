@@ -2,6 +2,8 @@ package main
 
 import "fmt"
 
+// TODO: Implement goroutines if possible
+
 func sol(cap1, cap2, t int) {
 	var bigJug, smallJug, steps int
 
