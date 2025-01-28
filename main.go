@@ -1,29 +1,52 @@
-/*
-* Solution algorithm:
-* Step 1: Empty all the Jugs
-* Step 2: Fill the smaller Jug(3)
-* Step 3: Transfer water from Jug(3) to Jug(4), making
-*         Jug(3) -> 0 and Jug(4) -> 3 (with 1 empty space)
-* Step 4: Fill Jug(3)
-* Step 5: Transfer water from Jug(3) to Jug(4), making
-* 		  Jug(3) -> 2 and Jug(4) -> 3 + 1 (1 unit is filled
-* 		  since 3 already exists)
-* Step 6: Empty the Jug(4)
-* Step 7: Transfer the remaining 2 units of water Jug(3) -> Jug(4)
-* */
-
 package main
 
-import (
-	"fmt"
-)
+import "fmt"
 
-func sol(cap1, cap2, t int) { }
+func sol(cap1, cap2, t int) {
+	var bigJug, smallJug, steps int
+
+	for bigJug != t && smallJug != t {
+
+		if bigJug == 0 {
+			bigJug = cap1
+			fmt.Printf("Step %v: Fill Big Jug to %v gallons\n", steps, bigJug)
+		} else if smallJug != cap2 {
+			emptySpace := cap2 - smallJug
+			if bigJug <= emptySpace {
+				smallJug += bigJug
+				bigJug = 0
+			} else {
+				bigJug -= emptySpace
+				smallJug = cap2
+			}
+			fmt.Printf("Step %v: Pour Big Jug into Small Jug,\n\t Big Jug: %v, Small Jug: %v\n", steps, bigJug, smallJug)
+		}
+
+		if smallJug == cap2 {
+			smallJug = 0
+			fmt.Printf("Step %v: Empty Small Jug\n", steps)
+		} else if bigJug == 0 {
+			bigJug = cap1
+			fmt.Printf("Step %v: Fill Big Jug to %v gallons\n", steps, bigJug)
+		}
+
+		steps++
+	}
+
+	if bigJug == t {
+		fmt.Printf("Big Jug has %v gallons of water\n", bigJug)
+	} else if smallJug == t {
+		fmt.Printf("Small Jug has %v gallons of water\n", smallJug)
+	}
+}
 
 func main() {
-	bigJugCapacity := 4
-	smallJugCapacity := 3
-	bigJugTarget := 2
+	bigJugCap := 4
+	smallJugCap := 3
+	t := 2
 
-	sol(bigJugCapacity, smallJugCapacity, bigJugTarget)
+	fmt.Printf("=========== The Water Jug Problem – Count Min Steps ===========\n")
+	fmt.Printf("Size of Big Jug: %v\nSize of Small Jug: %v\nTarger: %v\n\n", bigJugCap, smallJugCap, t)
+	sol(bigJugCap, smallJugCap, t)
+
 }
