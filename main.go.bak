@@ -1,0 +1,61 @@
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+func sol(cap1, cap2, t int) {
+	var bigJug, smallJug int
+	steps := 1
+
+	for bigJug != t && smallJug != t {
+
+		if bigJug == 0 {
+			bigJug = cap1
+			fmt.Printf("Step %d: Fill Big Jug to %d gallons\n\t Water in Big Jug: %v, Water in Small Jug: %v\n\n", steps, bigJug, bigJug, smallJug)
+			steps++
+		} else if smallJug != cap2 {
+			emptySpace := cap2 - smallJug
+			if bigJug <= emptySpace {
+				smallJug += bigJug
+				bigJug = 0
+			} else {
+				bigJug -= emptySpace
+				smallJug = cap2
+			}
+			fmt.Printf("Step %v: Pour Big Jug into Small Jug,\n\t Water in Big Jug: %v, Water in Small Jug: %v\n\n", steps, bigJug, smallJug)
+			steps++
+		}
+
+		if smallJug == cap2 {
+			smallJug = 0
+			fmt.Printf("Step %v: Empty Small Jug\n\t Water in Big Jug: %v, Water in Small Jug: %v\n\n", steps, bigJug, smallJug)
+			steps++
+		} else {
+			continue
+		}
+
+	}
+
+	if bigJug == t {
+		fmt.Printf("Solution Achieved: Big Jug has %v gallons of water and it took %v Steps\n", bigJug, steps)
+	} else if smallJug == t {
+		fmt.Printf("Small Jug has %v gallons of water\n", smallJug)
+	}
+}
+
+func main() {
+	bigJugCap := 3
+	smallJugCap := 4
+	t := 2
+
+	fmt.Printf("===============================================================\n")
+	fmt.Printf("=========== The Water Jug Problem – Count Min Steps ===========\n")
+	fmt.Printf("===============================================================\n")
+	fmt.Printf("Size of Big Jug: %v\nSize of Small Jug: %v\nTarger: %v\n\n", bigJugCap, smallJugCap, t)
+
+	time.Sleep(time.Second)
+	sol(bigJugCap, smallJugCap, t)
+
+}
