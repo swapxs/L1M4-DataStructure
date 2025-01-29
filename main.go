@@ -1,54 +1,37 @@
+// Implementating the program using BFS
 package main
 
 import "fmt"
 
-// TODO: Implement goroutines if possible
+type State struct {
+	jugs []int
+	walk []string
+}
 
-func sol(cap1, cap2, t int) {
-	var bigJug, smallJug, steps int
+func sol(cap []int, target int) ([]string, bool) {
 
-	for bigJug != t && smallJug != t {
-
-		if bigJug == 0 {
-			bigJug = cap1
-			fmt.Printf("Step %v: Fill Big Jug to %v gallons\n", steps, bigJug)
-		} else if smallJug != cap2 {
-			emptySpace := cap2 - smallJug
-			if bigJug <= emptySpace {
-				smallJug += bigJug
-				bigJug = 0
-			} else {
-				bigJug -= emptySpace
-				smallJug = cap2
-			}
-			fmt.Printf("Step %v: Pour Big Jug into Small Jug,\n\t Big Jug: %v, Small Jug: %v\n", steps, bigJug, smallJug)
-		}
-
-		if smallJug == cap2 {
-			smallJug = 0
-			fmt.Printf("Step %v: Empty Small Jug\n", steps)
-		} else if bigJug == 0 {
-			bigJug = cap1
-			fmt.Printf("Step %v: Fill Big Jug to %v gallons\n", steps, bigJug)
-		}
-
-		steps++
-	}
-
-	if bigJug == t {
-		fmt.Printf("Big Jug has %v gallons of water\n", bigJug)
-	} else if smallJug == t {
-		fmt.Printf("Small Jug has %v gallons of water\n", smallJug)
-	}
+	return nil, false
 }
 
 func main() {
-	bigJugCap := 4
-	smallJugCap := 3
-	t := 2
+	cap := []int{4,3}
+	target := 2
 
-	fmt.Printf("=========== The Water Jug Problem – Count Min Steps ===========\n")
-	fmt.Printf("Size of Big Jug: %v\nSize of Small Jug: %v\nTarger: %v\n\n", bigJugCap, smallJugCap, t)
-	sol(bigJugCap, smallJugCap, t)
+	walk, isPossible := sol(cap, target)
+
+	if isPossible {
+		fmt.Printf("===============================================================\n")
+		fmt.Printf("=========== The Water Jug Problem – Count Min Steps ===========\n")
+		fmt.Printf("===============================================================\n")
+		fmt.Printf("Size of Big Jug: %v\nSize of Small Jug: %v\nTarger: %v\n\n", cap[0], cap[1], target)
+
+
+		initJugs := make([]int, len(cap))
+
+		for i, step := range walk {
+			fmt.Printf("Step %v: %v\n", i+1, step)
+
+		}
+	}
 
 }
