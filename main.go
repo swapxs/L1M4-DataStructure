@@ -1,175 +1,136 @@
-// Implementating the program using BFS
 package main
 
 import (
-	"container/list"
 	"fmt"
+	"strconv"
 )
 
 type State struct {
-	jugs []int
-	walk []string
+	jug1, jug2 int
+	path []string
 }
 
-func toString(s []int) string {
-    var str string
-    for _, val := range s {
-        str += fmt.Sprintf("%d-", val)
-    }
-    return str
-}
-
-func contains(x []int, t int) bool {
-	for _, val := range x {
-		if val == t {
-			return true
-		}
+func min(a, b int) int {
+	if a < b {
+		return a
 	}
-	return false
+	return b
 }
 
-func sol(cap []int, target int) ([]string, bool) {
-	initState := State{
-		jugs: make([]int, len(cap)),
-		walk: []string{},
-	}
-
-	q := list.New()
-	q.PushBack(initState)
-
+func sol(cap1, cap2, target int) {
+	q := []State{{0, 0, []string{}}}
 	visited := make(map[string]bool)
-	visited[toString(initState.jugs)] = true
 
-	for q.Len() > 0{
-		item := q.Front()
-		q.Remove(item)
-		curr := item.Value.(State)
+	for len(q) > 0 {
+		curr := q[0]
+		q = q[1:]
 
-		if contains(curr.jugs, target) {
-			return curr.walk, true
-		}
-
-		// Operation: Fill Jug
-		for i := 0; i < len(cap); i++ {
-			if curr.jugs[i] < cap[i] {
-				nxt := make([]int, len(curr.jugs))
-				copy(nxt, curr.jugs)
-
-				nxt[i] = cap[i]
-
-				newState := State{
-					jugs: nxt,
-					walk: append(curr.walk, fmt.Sprintf("Fill Jug %v to %v gallons", i+1, cap[i])),
-				}
-
-				node := toString(newState.jugs)
-
-				if !visited[node] {
-					visited[node] = true
-					q.PushBack(newState)
-				}
+		if curr.jug1 == target {
+			fmt.Printf("Achieved the optimal solution in %v steps\n", len(curr.path))
+			for i, step := range curr.path {
+				fmt.Printf("Step %v: %v\n", i+1, step)
 			}
+			return
 		}
 
-		// Operation: Empty Jug
-		for i := 0; i < len(cap); i++ {
-			if curr.jugs[i] > 0 {
-				nxt := make([]int, len(curr.jugs))
-				copy(nxt, curr.jugs)
+		key := strconv.Itoa(curr.jug1) + "," + strconv.Itoa(curr.jug2)
 
-				nxt[i] = 0
+		if visited[key] {
+			continue
+		}
 
-				newState := State{
-					jugs: nxt,
-					walk: append(curr.walk, fmt.Sprintf("Empty Jug %v", i+1)),
-				}
+		visited[key] = true
 
-				node := toString(newState.jugs)
-
-				if !visited[node] {
-					visited[node] = true
-					q.PushBack(newState)
-				}
+		// Fill jug1
+		if curr.jug1 < cap1 {
+			nxt := State{
+				cap1,
+				curr.jug2, append([]string{}, curr.path...),
 			}
+
+			nxt.path = append(nxt.path, fmt.Sprintf("Fill Jug 1\n\tJug 1: %v, Jug 2: %v", nxt.jug1, nxt.jug2))
+			q = append(q, nxt)
 		}
 
-		// Operation: Pour
-		for i := 0; i < len(cap); i++ {
-			if curr.jugs[i] > 0 {
-				for j := 0; j < len(cap); j++ {
-					if i != j {
-						pour := min(curr.jugs[i], cap[j] - curr.jugs[j])
-						nxt := make([]int, len(curr.jugs))
-
-						copy(nxt, curr.jugs)
-
-						nxt[i] -= pour
-						nxt[j] += pour
-
-						newState := State{
-							jugs: nxt,
-							walk: append(curr.walk, fmt.Sprintf("Pour Jug %v into Jug %v", i+1, j+1)),
-						}
-
-						node := toString(newState.jugs)
-
-						if !visited[node] {
-							visited[node] = true
-							q.PushBack(newState)
-						}
-					}
-				}
+		// Fill jug2
+		if curr.jug2 < cap2 {
+			nxt := State{
+				curr.jug1,
+				cap2,
+				append([]string{}, curr.path...),
 			}
+
+			nxt.path = append(nxt.path, fmt.Sprintf("Fill Jug 2\n\tJug 1: %v, Jug 2: %v", nxt.jug1, nxt.jug2))
+			q = append(q, nxt)
 		}
+
+		// Empty jug1
+		if curr.jug1 > 0 {
+			nxt := State{
+				0,
+				curr.jug2,
+				append([]string{}, curr.path...),
+			}
+
+			nxt.path = append(nxt.path, fmt.Sprintf("Empty Jug 1\n\tJug 1: %v, Jug 2: %v", nxt.jug1, nxt.jug2))
+
+			q = append(q, nxt)
+
+		}
+
+		// Empty jug2
+		if curr.jug2 > 0 {
+			nxt := State{
+				curr.jug1,
+				0,
+				append([]string{}, curr.path...),
+			}
+
+			nxt.path = append(nxt.path, fmt.Sprintf("Empty Jug 2\n\tJug 1: %v, Jug 2: %v", nxt.jug1, nxt.jug2))
+			q = append(q, nxt)
+		}
+
+		// Pour jug1 to jug2
+		if curr.jug1 > 0 && curr.jug2 < cap2 {
+			pour := min(curr.jug1, cap2-curr.jug2)
+
+			nxt := State{
+				curr.jug1 - pour,
+				curr.jug2 + pour,
+				append([]string{}, curr.path...),
+			}
+
+			nxt.path = append(nxt.path, fmt.Sprintf("Pour Jug 1 to Jug 2\n\tJug 1: %v, Jug 2: %v", nxt.jug1, nxt.jug2))
+			q = append(q, nxt)
+		}
+
+		// Pour jug2 to jug1
+		if curr.jug2 > 0 && curr.jug1 < cap1 {
+			pour := min(curr.jug2, cap1-curr.jug1)
+
+			nxt := State{
+				curr.jug1 + pour,
+				curr.jug2 - pour,
+				append([]string{}, curr.path...),
+			}
+
+			nxt.path = append(nxt.path, fmt.Sprintf("Pour Jug 2 to Jug 1\n\tJug 1: %v, Jug 2: %v", nxt.jug1, nxt.jug2))
+			q = append(q, nxt)
+		}
+
 	}
-
-	return nil, false
+	fmt.Printf("No solution found.")
 }
 
 func main() {
-	cap := make([]int, 2)
+	jug1cap := 4
+	jug2cap := 3
+	trgt := 2
 
-	// ------- DATA -------
-	cap[0] = 4
-	cap[1] = 3
-	target := 2
-	// --------------------
-
-	walk, isPossible := sol(cap, target)
-
-	if isPossible {
-		fmt.Printf("===============================================================\n")
-		fmt.Printf("=========== The Water Jug Problem – Count Min Steps ===========\n")
-		fmt.Printf("===============================================================\n")
-		fmt.Printf("Size of Big Jug: %v\nSize of Small Jug: %v\nTarger: %v\n\n", cap[0], cap[1], target)
-
-
-		initJugs := make([]int, len(cap))
-
-		for i, step := range walk {
-			fmt.Printf("Step %v: %v\n", i+1, step)
-
-			if step[:4] == "Fill" {
-				var jugNo, gallons int
-				fmt.Sscanf(step, "Fill Jug %v to %v gallons", &jugNo, &gallons)
-				initJugs[jugNo - 1] = gallons
-			} else if step[:5] =="Emty" {
-				var jugNo int
-				fmt.Sscanf(step, "Empty Jug %v ", &jugNo)
-				initJugs[jugNo - 1] = 0
-			} else if step[:4] == "Pour" {
-				var src, dest int
-				fmt.Sscanf(step, "Pour Jug %v into Jug %v", &src, &dest)
-
-				pourAmount := min(initJugs[src - 1], cap[dest - 1] - initJugs[dest - 1])
-				initJugs[src - 1] -= pourAmount
-				initJugs[dest - 1] += pourAmount
-			}
-
-			fmt.Printf("\tWater in Big Jug: %v, Water in Small Jug: %v\n\n", initJugs[0], initJugs[1])
-		}
-	} else {
-		fmt.Printf("No Solution.")
-	}
+	fmt.Println("==================================================================================")
+	fmt.Println("================== THE WATER JUG PROBLEM -- COUNT MINIMUM STEPS ==================")
+	fmt.Println("==================================================================================")
+	fmt.Printf("Size of Jug 1: %v\nSize of Jug 2: %v\nTarget: %v\n", jug1cap, jug2cap, trgt)
+	sol(jug1cap, jug2cap, trgt)
 
 }
