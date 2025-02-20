@@ -1,0 +1,98 @@
+===========================================================================
+                             PROBLEM STATEMENT
+===========================================================================
+
+Write a program to solve the following problem using python/scala/golang:
+
+1.You have two jugs, a 4-gallon and a 3-gallon. Neither of the jugs has
+  markings on them. There is a pump that can be used to fill the jugs with
+  water. How can you get exactly two gallons of water in the 4 gallon jug?
+
+2. Generalise the problem above so that the parameters to your solution include
+   the sizes of each jug and the final amount of water to be left in the larger
+   jug.
+
+
+===========================================================================
+                                ALGORITHM 
+===========================================================================
+1. Initialization:
+   - Start with both jugs empty.
+   - Initialize variables to keep track of the water in each jug and the number
+     of steps taken.
+
+2. Pouring Logic:
+   - Step 1: If Big Jug is empty, fill it completely.
+     - Print the action: "Fill Big Jug to [capacity of Big Jug] gallons."
+
+   - Step 2: If Small Jug is not full, pour water from Big Jug into Small Jug
+     until either Big Jug is empty or Small Jug is full.
+     - Calculate the space available in Small Jug.
+
+     - If the water in Big Jug is less than or equal to the space available in
+       Small Jug, pour all the water from Big Jug into Small Jug.
+
+     - Otherwise, pour enough water from Big Jug to fill Small Jug completely.
+
+     - Print the action: "Pour Big Jug into Small Jug, Big Jug: [remaining
+       water in Jug A], Small Jug: [remaining water in Small Jug]."
+
+   - Step 3: If Small Jug is full, empty it.
+     - Print the action: "Empty Small Jug."
+
+   - Step 4: Repeat the process until either Big Jug or Small Jug contains the
+     target amount of water.
+     - Increment the step counter.
+
+3. Output:
+   - If Big Jug contains the target amount of water, print: "Big Jug has
+     [target] gallons of water."
+
+   - If Small Jug contains the target amount of water, print: "Small Jug has
+     [target] gallons of water."
+
+-------------------------
+Detailed Steps:
+-------------------------
+
+1. Initialization:
+   - Big Jug = 0 gallons
+   - Small Jug = 0 gallons
+   - Steps = 0
+
+2. Pouring Logic:
+   - Step 1: Check if Big Jug is empty.
+     - If yes, fill Big Jug to its full capacity.
+     - Print: "Step [steps]: Fill Big Jug to [capacity of Big Jug] gallons."
+
+   - Step 2: Check if Small Jug is not full.
+     - Calculate the space available in Small Jug: `spaceInB = capacity of
+       Small Jug - current water in Small Jug`.
+
+     - If the water in Big Jug is less than or equal to the space available in Small Jug:
+       - Pour all the water from Big Jug into Small Jug.
+       - Big Jug = 0 gallons
+       - Small Jug = Small Jug + Big Jug
+
+     - Otherwise:
+       - Pour enough water from Big Jug to fill Small Jug completely.
+       - Big Jug = Big Jug - spaceInB
+       - Small Jug = capacity of Small Jug
+
+     - Print: "Step [steps]: Pour Big Jug into Small Jug, Big Jug: [remaining
+       water in Big Jug], Small Jug: [remaining water in Small Jug]."
+
+   - Step 3: Check if Small Jug is full.
+     - If yes, empty Small Jug.
+     - Print: "Step [steps]: Empty Small Jug."
+
+   - Step 4: Increment the step counter.
+
+   - Repeat Steps 1-4 until either Big Jug or Small Jug contains the target amount of water.
+
+3. Output:
+   - If Big Jug contains the target amount of water:
+     - Print: "Big Jug has [target] gallons of water."
+
+   - If Small Jug contains the target amount of water:
+     - Print: "Small Jug has [target] gallons of water."
